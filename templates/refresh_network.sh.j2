@@ -1,0 +1,11 @@
+#!/bin/bash
+{{ansible_managed | comment}}
+{% if inventory_hostname in ct_hosts %}
+{% set interface=ct_hosts[inventory_hostname].iface %}
+{% else %}
+{% set interface='eth0' %}
+{% endif %}
+sudo ifconfig {{interface}} down
+sleep 1
+sudo ifconfig {{interface}} up
+exit 0

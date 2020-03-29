@@ -1,0 +1,14 @@
+{% if inventory_hostname in ct_hosts %}
+{% set IFACE=ct_hosts[inventory_hostname].iface %}
+{% endif %}
+---
+{{ansible_managed|comment}} Netplan example for DHCP
+#
+network:
+  version: 2
+  renderer: {{ct_network_engine}}
+  ethernets:
+    {{IFACE|default('eth0')}}:
+      dhcp4: yes
+      dhcp6: no
+...

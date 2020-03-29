@@ -1,0 +1,82 @@
+---
+# --------------------------------
+
+- name: 'install packages'
+  apt:
+    pkg: ['busybox-syslogd', 'finger', 'firehol', 'ipset', 'makepasswd', 'mysql-client', 'net-tools', 'pgpgpg', 'postgresql-client', 'python3', 'python3-apt', 'sysstat', 'sysvbanner']
+    state: present
+  when: ct_distro == 'ubuntu'
+  become: true
+  tags:
+  - ubuntu
+  - ubuntu-pkg
+  - x-pkg
+
+- name: 'install packages (~tor,~cloud)'
+  apt:
+    pkg: ['nfs-common', 'nfs-kernel-server']
+    state: present
+  when:
+  - ct_distro == 'ubuntu'
+  - ct_tor == false
+  - ct_cloud is not defined
+  become: true
+  tags:
+  - ubuntu
+  - ubuntu-pkg
+  - x-pkg
+
+# --------------------------------
+
+- name: 'render script for refresh network after, for example, changing location'
+  template:
+    src: refresh_network.sh.j2
+    dest: /usr/local/bin/refresh_network.sh
+    owner: root
+    group: root
+    mode: '0775'
+  become: true
+  tags:
+  - ubuntu
+  - ubuntu-network
+  - ubuntu-scripts
+
+- name: 'daily restart of NTP daemon'
+  cron:
+    user: root
+    name: 'restart_ntp_service'
+    minute: '0'
+    hour: '3'
+    job: '/etc/init.d/ntp restart'
+  become: true
+  tags:
+  - ubuntu
+  - ntp
+  - ntp-cron
+  - x-cron
+
+# --------------------------------
+
+- name: 'tasks specific to a Ubuntu major release'
+  include_tasks: ubuntu_{{ct_distro_major}}_only.yml
+  tags:
+  - ubuntu
+  - always
+  - bootstrap
+
+- name: 'changes introduced with Ubuntu 18'
+  include_tasks: ubuntu_18_plus.yml
+  when: ct_distro_major | int >= 18
+  tags:
+  - ubuntu
+  - always
+
+- name: 'changes introduced with Ubuntu 19'
+  include_tasks: ubuntu_19_plus.yml
+  when: ct_distro_major | int >= 19
+  tags:
+  - ubuntu
+  - always
+
+# --------------------------------
+...

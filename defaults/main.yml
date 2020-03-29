@@ -1,0 +1,4 @@
+---
+canonical_mirror_core: '{{canonical_mirror_country}}.archive.ubuntu.com'
+canonical_mirror_secy: security.ubuntu.com  # not country specific
+...
