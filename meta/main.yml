@@ -2,5 +2,5 @@
 dependencies:
 - src: git+https://github.com/cabtech/ansible-role-family-debian.git
   tags: always
-  version: '1.0.0'
+  version: '1.0.1'
 ...
