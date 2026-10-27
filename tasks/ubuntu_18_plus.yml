@@ -5,8 +5,8 @@
     name: ifupdown
     state: absent
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   become: true
   tags:
   - ubuntu
@@ -19,8 +19,8 @@
   ansible.builtin.stat:
     path: /etc/NetworkManager
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_network_engine == 'networkmanager'
   check_mode: false
   register: reg_nm
@@ -37,8 +37,8 @@
     group: root
     mode: '0644'
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_network_engine == 'networkmanager'
   - reg_nm.stat.isdir is defined
   - reg_nm.stat.isdir
@@ -56,8 +56,8 @@
     state: "{{ (ct_network_engine == 'networkmanager') | ternary('started', 'stopped') }}"
     # masked: "{{ (ct_network_engine == 'networkmanager') | ternary(false, true) }}"
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_provider is not defined
   become: true
   tags:
@@ -71,8 +71,8 @@
     enabled: "{{ (ct_network_engine == 'networkd') | ternary(true, false) }}"
     state: "{{ (ct_network_engine == 'networkd') | ternary('started', 'stopped') }}"
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_container is not defined
   become: true
   tags:
@@ -88,8 +88,8 @@
     group: root
     mode: '0755'
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
@@ -106,8 +106,8 @@
     group: root
     mode: '0644'
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
@@ -125,8 +125,8 @@
     group: root
     mode: '0644'
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
@@ -146,8 +146,8 @@
     job: journalctl --vacuum-time=7d
     weekday: '1'  # Monday
   when:
-  - ct_distro == 'ubuntu'
-  - ct_distro_major | int >= 18
+  - ansible_facts['distribution'] == 'Ubuntu'
+  - ansible_facts['distribution_major_version'] | int >= 18
   become: true
   tags:
   - ubuntu

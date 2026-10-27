@@ -18,7 +18,7 @@
     - sysstat
     - sysvbanner
     state: present
-  when: ct_distro == 'ubuntu'
+  when: ansible_facts['distribution'] == 'Ubuntu'
   become: true
   tags:
   - ubuntu
@@ -30,7 +30,7 @@
     pkg: ['nfs-common', 'nfs-kernel-server']
     state: present
   when:
-  - ct_distro == 'ubuntu'
+  - ansible_facts['distribution'] == 'Ubuntu'
   - not (ct_tor | bool)
   - ct_cloud is not defined
   become: true
@@ -71,7 +71,7 @@
 # --------------------------------
 
 - name: 'Tasks specific to a Ubuntu major release'
-  ansible.builtin.include_tasks: ubuntu_{{ ct_distro_major }}_only.yml
+  ansible.builtin.include_tasks: ubuntu_{{ ansible_facts['distribution_major_version'] }}_only.yml
   tags:
   - ubuntu
   - always
@@ -79,14 +79,14 @@
 
 - name: 'Changes introduced with Ubuntu 18'
   ansible.builtin.include_tasks: ubuntu_18_plus.yml
-  when: ct_distro_major | int >= 18
+  when: ansible_facts['distribution_major_version'] | int >= 18
   tags:
   - ubuntu
   - always
 
 - name: 'Changes introduced with Ubuntu 19'
   ansible.builtin.include_tasks: ubuntu_19_plus.yml
-  when: ct_distro_major | int >= 19
+  when: ansible_facts['distribution_major_version'] | int >= 19
   tags:
   - ubuntu
   - always
