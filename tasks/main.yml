@@ -1,9 +1,22 @@
 ---
 # --------------------------------
 
-- name: 'install packages'
-  apt:
-    pkg: ['busybox-syslogd', 'finger', 'firehol', 'ipset', 'makepasswd', 'mysql-client', 'net-tools', 'pgpgpg', 'postgresql-client', 'python3', 'python3-apt', 'sysstat', 'sysvbanner']
+- name: 'Install packages'
+  ansible.builtin.apt:
+    pkg:
+    - busybox-syslogd
+    - finger
+    - firehol
+    - ipset
+    - makepasswd
+    - mysql-client
+    - net-tools
+    - pgpgpg
+    - postgresql-client
+    - python3
+    - python3-apt
+    - sysstat
+    - sysvbanner
     state: present
   when: ct_distro == 'ubuntu'
   become: true
@@ -12,13 +25,13 @@
   - ubuntu-pkg
   - x-pkg
 
-- name: 'install packages (~tor,~cloud)'
-  apt:
+- name: 'Install packages (~tor,~cloud)'
+  ansible.builtin.apt:
     pkg: ['nfs-common', 'nfs-kernel-server']
     state: present
   when:
   - ct_distro == 'ubuntu'
-  - ct_tor == false
+  - not (ct_tor | bool)
   - ct_cloud is not defined
   become: true
   tags:
@@ -28,8 +41,8 @@
 
 # --------------------------------
 
-- name: 'render script for refresh network after, for example, changing location'
-  template:
+- name: 'Render script for refresh network after, for example, changing location'
+  ansible.builtin.template:
     src: refresh_network.sh.j2
     dest: /usr/local/bin/refresh_network.sh
     owner: root
@@ -41,8 +54,8 @@
   - ubuntu-network
   - ubuntu-scripts
 
-- name: 'daily restart of NTP daemon'
-  cron:
+- name: 'Daily restart of NTP daemon'
+  ansible.builtin.cron:
     user: root
     name: 'restart_ntp_service'
     minute: '0'
@@ -57,22 +70,22 @@
 
 # --------------------------------
 
-- name: 'tasks specific to a Ubuntu major release'
-  include_tasks: ubuntu_{{ct_distro_major}}_only.yml
+- name: 'Tasks specific to a Ubuntu major release'
+  ansible.builtin.include_tasks: ubuntu_{{ ct_distro_major }}_only.yml
   tags:
   - ubuntu
   - always
   - bootstrap
 
-- name: 'changes introduced with Ubuntu 18'
-  include_tasks: ubuntu_18_plus.yml
+- name: 'Changes introduced with Ubuntu 18'
+  ansible.builtin.include_tasks: ubuntu_18_plus.yml
   when: ct_distro_major | int >= 18
   tags:
   - ubuntu
   - always
 
-- name: 'changes introduced with Ubuntu 19'
-  include_tasks: ubuntu_19_plus.yml
+- name: 'Changes introduced with Ubuntu 19'
+  ansible.builtin.include_tasks: ubuntu_19_plus.yml
   when: ct_distro_major | int >= 19
   tags:
   - ubuntu
