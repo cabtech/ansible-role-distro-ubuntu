@@ -54,7 +54,7 @@
     name: network-manager
     enabled: "{{ (ct_network_engine == 'networkmanager') | ternary(true, false) }}"
     state: "{{ (ct_network_engine == 'networkmanager') | ternary('started', 'stopped') }}"
-#   masked: "{{ (ct_network_engine == 'networkmanager') | ternary(false, true) }}"
+    # masked: "{{ (ct_network_engine == 'networkmanager') | ternary(false, true) }}"
   when:
   - ct_distro == 'ubuntu'
   - ct_distro_major | int >= 18
