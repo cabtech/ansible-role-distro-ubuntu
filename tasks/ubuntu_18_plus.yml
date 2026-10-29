@@ -1,145 +1,129 @@
 ---
+# --------------------------------
 
-- name: 'Remove ifupdown so we can use netplan'
+- name: "Remove ifupdown so we can use netplan"
   ansible.builtin.apt:
     name: ifupdown
     state: absent
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   become: true
   tags: ["ubuntu"]
 
-- name: 'Stat /etc/NetworkManager (check_mode=F,register)'
+- name: "Stat /etc/NetworkManager (check_mode=F,register)"
   ansible.builtin.stat:
     path: /etc/NetworkManager
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
-  - ct_network_engine == 'networkmanager'
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
+  - ct_network_engine == "networkmanager"
   check_mode: false
   register: reg_nm
   tags: ["ubuntu"]
 
-- name: 'Push NetworkManager.conf'
+- name: "Push NetworkManager.conf"
   ansible.builtin.copy:
     src: NetworkManager.conf
     dest: /etc/NetworkManager/NetworkManager.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
-  - ct_network_engine == 'networkmanager'
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
+  - ct_network_engine == "networkmanager"
   - reg_nm.stat.isdir is defined
   - reg_nm.stat.isdir
   become: true
-<<<<<<< HEAD
-  notify: Handler_network_manager_config
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - networkmanager
-=======
-  notify: handler_network_manager_config
+  notify: HandlerNetworkManagerConfig
   tags: ["ubuntu"]
->>>>>>> 4bae4bd (lint)
 
-- name: 'Manage Network Manager'
+- name: "Manage Network Manager"
   ansible.builtin.service:
     name: network-manager
     enabled: "{{ (ct_network_engine == 'networkmanager') | ternary(true, false) }}"
     state: "{{ (ct_network_engine == 'networkmanager') | ternary('started', 'stopped') }}"
-    # masked: "{{ (ct_network_engine == 'networkmanager') | ternary(false, true) }}"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   - ct_provider is not defined
   become: true
   tags: ["ubuntu"]
 
-- name: 'Manage systemd-networkd'
+- name: "Manage systemd-networkd"
   ansible.builtin.service:
     name: systemd-networkd
     enabled: "{{ (ct_network_engine == 'networkd') | ternary(true, false) }}"
     state: "{{ (ct_network_engine == 'networkd') | ternary('started', 'stopped') }}"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   - ct_container is not defined
   become: true
   tags: ["ubuntu"]
 
-- name: 'Create /etc/netplan'
+- name: "Create /etc/netplan"
   ansible.builtin.file:
     path: /etc/netplan
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   - ct_provider is not defined
-  - ct_network_engine == 'networkd'
+  - ct_network_engine == "networkd"
   become: true
   tags: ["ubuntu"]
 
-- name: 'Set up IP address via netplan (TODO)'  # TODO decide on process for vagrant
+- name: "Set up IP address via netplan (TODO)"  # TODO decide on process for vagrant
   ansible.builtin.template:
     src: netplan.j2
     dest: /etc/netplan/01-network-manager-all.yaml
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   - ct_provider is not defined
-  - ct_network_engine == 'networkd'
+  - ct_network_engine == "networkd"
   become: true
-<<<<<<< HEAD
-  notify: Handler_netplan_ubuntu
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - netplan
-=======
-  notify: handler_netplan_ubuntu
+  notify: HandlerNetplanUbuntu
   tags: ["ubuntu"]
->>>>>>> 4bae4bd (lint)
 
-- name: 'Render template for DHCP netplan example (TODO)'  # TODO decide on process for vagrant
+- name: "Render template for DHCP netplan example (TODO)"  # TODO decide on process for vagrant
   ansible.builtin.template:
     src: netplan-dhcp.yml.j2
     dest: /etc/netplan/00-nm-dhcp.example
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   - ct_provider is not defined
-  - ct_network_engine == 'networkd'
+  - ct_network_engine == "networkd"
   become: true
   tags: ["ubuntu"]
 
-- name: 'Weekly cron job to clean up journal data'
+- name: "Weekly cron job to clean up journal data"
   ansible.builtin.cron:
-    name: 'journalctl-clean-up'
+    name: "journalctl-clean-up"
     state: present
     disabled: false
     user: root
-    minute: '20'
-    hour: '16'
+    minute: "20"
+    hour: "16"
     job: journalctl --vacuum-time=7d
-    weekday: '1'  # Monday
+    weekday: "1"  # Monday
   when:
-  - ansible_facts['distribution'] == 'Ubuntu'
-  - ansible_facts['distribution_major_version'] | int >= 18
+  - ansible_facts["distribution"] == "Ubuntu"
+  - ansible_facts["distribution_major_version"] | int >= 18
   become: true
   tags: ["ubuntu"]
-# alt arg = --vacuum-size=2G
 
+# --------------------------------
 ...

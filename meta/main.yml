@@ -1,27 +1,14 @@
 ---
-dependencies:
-- src: git+https://github.com/cabtech/ansible-role-family-debian.git
-  tags: always
-<<<<<<< HEAD
-  version: '1.2.0'
-=======
-  version: '1.0.1'
->>>>>>> 4bae4bd (lint)
+dependencies: []
 
 galaxy_info:
   author: Tim Short
   description: Standard Ubuntu build
   license: GPL v3
-<<<<<<< HEAD
   min_ansible_version: "2"
   namespace: cabtech
   role_name: ansible_role_distro_ubuntu
   platforms:
   - name: Ubuntu
     versions: ["all"]
-=======
-  role_name: ansible_role_distro_ubuntu
-  min_ansible_version: "2"
-  namespace: cabtech
->>>>>>> 4bae4bd (lint)
 ...

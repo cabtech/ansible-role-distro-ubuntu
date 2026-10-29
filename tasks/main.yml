@@ -3,46 +3,20 @@
 
 - name: 'Install packages'
   ansible.builtin.apt:
-<<<<<<< HEAD
-    pkg:
-    - busybox-syslogd
-    - finger
-    - firehol
-    - ipset
-    - makepasswd
-    - mysql-client
-    - net-tools
-    - pgpgpg
-    - postgresql-client
-    - python3
-    - python3-apt
-    - sysstat
-    - sysvbanner
-=======
     name: "{{ distro_ubuntu_pkgs }}"
->>>>>>> 4bae4bd (lint)
     state: present
   when: ansible_facts['distribution'] == 'Ubuntu'
   become: true
   tags: ["ubuntu"]
 
-<<<<<<< HEAD
 - name: 'Install packages (~tor,~cloud)'
-=======
-- name: 'Install packages (filtered)'
->>>>>>> 4bae4bd (lint)
   ansible.builtin.apt:
     pkg: ['nfs-common', 'nfs-kernel-server']
     state: present
   when:
-<<<<<<< HEAD
   - ansible_facts['distribution'] == 'Ubuntu'
   - not (ct_tor | bool)
-=======
->>>>>>> 4bae4bd (lint)
   - ct_cloud is not defined
-  - ct_distro == 'ubuntu'
-  - not ct_tor
   become: true
   tags: ["ubuntu"]
 
@@ -71,27 +45,6 @@
 # --------------------------------
 
 - name: 'Tasks specific to a Ubuntu major release'
-<<<<<<< HEAD
-  ansible.builtin.include_tasks: ubuntu_{{ ansible_facts['distribution_major_version'] }}_only.yml
-  tags:
-  - ubuntu
-  - always
-  - bootstrap
-
-- name: 'Changes introduced with Ubuntu 18'
-  ansible.builtin.include_tasks: ubuntu_18_plus.yml
-  when: ansible_facts['distribution_major_version'] | int >= 18
-  tags:
-  - ubuntu
-  - always
-
-- name: 'Changes introduced with Ubuntu 19'
-  ansible.builtin.include_tasks: ubuntu_19_plus.yml
-  when: ansible_facts['distribution_major_version'] | int >= 19
-  tags:
-  - ubuntu
-  - always
-=======
   ansible.builtin.include_tasks: ubuntu_{{ ct_distro_major }}_only.yml
   tags: ["ubuntu", "always"]
 
@@ -104,7 +57,6 @@
   ansible.builtin.include_tasks: ubuntu_19_plus.yml
   when: ct_distro_major | int >= 19
   tags: ["ubuntu", "always"]
->>>>>>> 4bae4bd (lint)
 
 # --------------------------------
 ...
