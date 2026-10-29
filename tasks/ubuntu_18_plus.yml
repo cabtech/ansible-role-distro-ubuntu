@@ -8,12 +8,7 @@
   - ansible_facts['distribution'] == 'Ubuntu'
   - ansible_facts['distribution_major_version'] | int >= 18
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - ubuntu-pkg
-  - netplan
-  - x-pkg
+  tags: ["ubuntu"]
 
 - name: 'Stat /etc/NetworkManager (check_mode=F,register)'
   ansible.builtin.stat:
@@ -24,10 +19,7 @@
   - ct_network_engine == 'networkmanager'
   check_mode: false
   register: reg_nm
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - networkmanager
+  tags: ["ubuntu"]
 
 - name: 'Push NetworkManager.conf'
   ansible.builtin.copy:
@@ -43,11 +35,16 @@
   - reg_nm.stat.isdir is defined
   - reg_nm.stat.isdir
   become: true
+<<<<<<< HEAD
   notify: Handler_network_manager_config
   tags:
   - ubuntu
   - ubuntu-network
   - networkmanager
+=======
+  notify: handler_network_manager_config
+  tags: ["ubuntu"]
+>>>>>>> 4bae4bd (lint)
 
 - name: 'Manage Network Manager'
   ansible.builtin.service:
@@ -60,10 +57,7 @@
   - ansible_facts['distribution_major_version'] | int >= 18
   - ct_provider is not defined
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - networkmanager
+  tags: ["ubuntu"]
 
 - name: 'Manage systemd-networkd'
   ansible.builtin.service:
@@ -75,10 +69,7 @@
   - ansible_facts['distribution_major_version'] | int >= 18
   - ct_container is not defined
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - networkd
+  tags: ["ubuntu"]
 
 - name: 'Create /etc/netplan'
   ansible.builtin.file:
@@ -93,10 +84,7 @@
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - netplan
+  tags: ["ubuntu"]
 
 - name: 'Set up IP address via netplan (TODO)'  # TODO decide on process for vagrant
   ansible.builtin.template:
@@ -111,11 +99,16 @@
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
+<<<<<<< HEAD
   notify: Handler_netplan_ubuntu
   tags:
   - ubuntu
   - ubuntu-network
   - netplan
+=======
+  notify: handler_netplan_ubuntu
+  tags: ["ubuntu"]
+>>>>>>> 4bae4bd (lint)
 
 - name: 'Render template for DHCP netplan example (TODO)'  # TODO decide on process for vagrant
   ansible.builtin.template:
@@ -130,10 +123,7 @@
   - ct_provider is not defined
   - ct_network_engine == 'networkd'
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - netplan
+  tags: ["ubuntu"]
 
 - name: 'Weekly cron job to clean up journal data'
   ansible.builtin.cron:
@@ -149,10 +139,7 @@
   - ansible_facts['distribution'] == 'Ubuntu'
   - ansible_facts['distribution_major_version'] | int >= 18
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-journalctl
-  - x-cron
+  tags: ["ubuntu"]
 # alt arg = --vacuum-size=2G
 
 ...

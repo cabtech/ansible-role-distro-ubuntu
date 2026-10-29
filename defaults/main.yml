@@ -1,4 +1,23 @@
 ---
+<<<<<<< HEAD
 canonical_mirror_core: '{{ canonical_mirror_country }}.archive.ubuntu.com'
+=======
+canonical_mirror_core: "{{ canonical_mirror_country }}.archive.ubuntu.com"
+>>>>>>> 4bae4bd (lint)
 canonical_mirror_secy: security.ubuntu.com  # not country specific
+
+distro_ubuntu_pkgs:
+- "busybox-syslogd"
+- "finger"
+- "firehol"
+- "ipset"
+- "makepasswd"
+- "mysql-client"
+- "net-tools"
+- "pgpgpg"
+- "postgresql-client"
+- "python3"
+- "python3-apt"
+- "sysstat"
+- "sysvbanner"
 ...

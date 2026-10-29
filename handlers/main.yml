@@ -2,16 +2,25 @@
 # --------------------------------
 
 # do not call "&& netplan apply" after the generate as Ansible hangs
+<<<<<<< HEAD
 - name: Handler_netplan_ubuntu
+=======
+- name: handler_netplan_ubuntu
+>>>>>>> 4bae4bd (lint)
   ansible.builtin.shell: netplan generate
   become: true
-  tags: skip_ansible_lint
+  tags: ["ubuntu", "skip_ansible_lint"]
 
+<<<<<<< HEAD
 - name: Handler_network_manager_config
+=======
+- name: handler_network_manager_config
+>>>>>>> 4bae4bd (lint)
   ansible.builtin.service:
     name: network-manager
     state: restarted
   become: true
+  tags: ["ubuntu", "skip_ansible_lint"]
 
 # --------------------------------
 ...

@@ -3,6 +3,7 @@
 
 - name: 'Install packages'
   ansible.builtin.apt:
+<<<<<<< HEAD
     pkg:
     - busybox-syslogd
     - finger
@@ -17,27 +18,33 @@
     - python3-apt
     - sysstat
     - sysvbanner
+=======
+    name: "{{ distro_ubuntu_pkgs }}"
+>>>>>>> 4bae4bd (lint)
     state: present
   when: ansible_facts['distribution'] == 'Ubuntu'
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-pkg
-  - x-pkg
+  tags: ["ubuntu"]
 
+<<<<<<< HEAD
 - name: 'Install packages (~tor,~cloud)'
+=======
+- name: 'Install packages (filtered)'
+>>>>>>> 4bae4bd (lint)
   ansible.builtin.apt:
     pkg: ['nfs-common', 'nfs-kernel-server']
     state: present
   when:
+<<<<<<< HEAD
   - ansible_facts['distribution'] == 'Ubuntu'
   - not (ct_tor | bool)
+=======
+>>>>>>> 4bae4bd (lint)
   - ct_cloud is not defined
+  - ct_distro == 'ubuntu'
+  - not ct_tor
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-pkg
-  - x-pkg
+  tags: ["ubuntu"]
 
 # --------------------------------
 
@@ -49,10 +56,7 @@
     group: root
     mode: '0775'
   become: true
-  tags:
-  - ubuntu
-  - ubuntu-network
-  - ubuntu-scripts
+  tags: ["ubuntu"]
 
 - name: 'Daily restart of NTP daemon'
   ansible.builtin.cron:
@@ -62,15 +66,12 @@
     hour: '3'
     job: '/etc/init.d/ntp restart'
   become: true
-  tags:
-  - ubuntu
-  - ntp
-  - ntp-cron
-  - x-cron
+  tags: ["ubuntu"]
 
 # --------------------------------
 
 - name: 'Tasks specific to a Ubuntu major release'
+<<<<<<< HEAD
   ansible.builtin.include_tasks: ubuntu_{{ ansible_facts['distribution_major_version'] }}_only.yml
   tags:
   - ubuntu
@@ -90,6 +91,20 @@
   tags:
   - ubuntu
   - always
+=======
+  ansible.builtin.include_tasks: ubuntu_{{ ct_distro_major }}_only.yml
+  tags: ["ubuntu", "always"]
+
+- name: 'Changes introduced with Ubuntu 18'
+  ansible.builtin.include_tasks: ubuntu_18_plus.yml
+  when: ct_distro_major | int >= 18
+  tags: ["ubuntu", "always"]
+
+- name: 'Changes introduced with Ubuntu 19'
+  ansible.builtin.include_tasks: ubuntu_19_plus.yml
+  when: ct_distro_major | int >= 19
+  tags: ["ubuntu", "always"]
+>>>>>>> 4bae4bd (lint)
 
 # --------------------------------
 ...
